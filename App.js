@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { AppRegistry, FlatList, StyleSheet, Text, View, Image } from 'react-native';
+import { AppRegistry, FlatList, StyleSheet, Text, View, Image, Button,Platform } from 'react-native';
+import { createAppContainer, createStackNavigator, StackActions, NavigationActions } from 'react-navigation';
 
 const styles = StyleSheet.create({
   container: {
    flex: 1,
-   paddingTop: 22
+   paddingTop: 22,
   },
   item: {
     padding: 10,
@@ -78,16 +79,84 @@ class Filter extends Component{
     return(
       <View style={styles.filtersContainer}>
           <Text style={styles.filterText}>Most popular</Text>
-          <Text>IconFilter</Text>
+          <Image
+        source={require('./assets/view.png')}
+        style={{ width: 20, height: 20 }}
+      />
         </View>
     );
   }
 }
 
-export default class App extends Component {
+class DetailsScreen extends Component {
+  static navigationOptions = {
+    title: 'Movie details',
+    headerRight: (
+      <Image
+        source={require('./assets/share.png')}
+        style={{ width: 20, height: 20 }}
+      />
+    ),
+  };
+  render() {
+
+    const { navigation } = this.props;
+    const key = navigation.getParam('key', 'Nokey');
+
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>Details Screen {key}</Text>
+      </View>
+    );
+  }  
+}
+
+class HomeScreen extends Component {
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerTitle: 'Home',
+      headerRight: (
+      <Image
+        source={require('./assets/filter.png')}
+        style={{ width: 20, height: 20 }}
+      />
+      ),
+      // headerRight: (
+      //   <Button
+      //     onPress={navigation.getParam('increaseCount')}
+      //     title="+1"
+      //     color={Platform.OS === 'ios' ? '#fff' : null}
+      //   />
+      // ),
+    };
+  };
+
+  componentWillMount() {
+    this.props.navigation.setParams({ increaseCount: this._increaseCount });
+  }
+
+  state = {
+    count: 0,
+  };
+
+  _increaseCount = () => {
+    this.setState({ count: this.state.count + 1 });
+  };
+
   render() {
     return (
       <View style={styles.container}>
+      <Text>Count: {this.state.count}</Text>
+        <Button
+          title="Go to Details"
+          onPress={() => this.props.navigation.navigate('Details',
+          {
+            key:'1'
+          }
+          )
+        }
+        />
+
         <Filter />
         <FlatList
           data={[
@@ -106,5 +175,22 @@ export default class App extends Component {
   }
 }
 
+const AppNavigator = createStackNavigator(
+  {
+    Home: HomeScreen,
+    Details: DetailsScreen,
+  },
+  {
+    initialRouteName: 'Home',
+  }
+);
 
-AppRegistry.registerComponent('MovieApp', () => App);
+const AppContainer = createAppContainer(AppNavigator);
+
+export default class App extends Component {
+  render() {
+    return <AppContainer />;
+  }
+}
+
+AppRegistry.registerComponent('MovieApp', () => AppNavigator);

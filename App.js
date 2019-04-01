@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { AppRegistry, FlatList, StyleSheet, Text, View, Image, Button,Platform } from 'react-native';
 import { createAppContainer,createBottomTabNavigator, createStackNavigator, StackActions, NavigationActions } from 'react-navigation';
 
+import API from './api';
+
 const styles = StyleSheet.create({
   container: {
    flex: 1,
@@ -32,10 +34,14 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 20,
     height: 200,
+    borderRadius:10,
+    // borderWidth: 1,
+    // borderColor: '#fff'
+
   },
 
   infoMovie:{
-    flex:2,
+    flex:1,
     justifyContent: 'space-between',
   },
 
@@ -50,22 +56,31 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: 'bold',    
   },
+
+  imgTest:{
+    width: 400,
+    height:400
+  },
 })
 
 class Movie extends Component{
   render() {
+
+    var IMG_URL = 'https://image.tmdb.org/t/p/w300';
+
     return(
       <View style={styles.containerMovie}>
-        <Image style={styles.photoMovie} source={{uri: this.props.imageUri}} />
+        {/* <Image style={styles.photoMovie} source={{uri: IMG_URL + this.props.imageUri}} /> */}
+        <Image style={styles.photoMovie} source={{uri: 'http://image.tmdb.org/t/p/w500/fw02ONlDhrYjTSZV8XO6hhU3ds3.jpg'}} />
         <View style={styles.infoMovie}>
           <View>
-          <Text style={styles.titleText}>{this.props.title}</Text>
+          <Text style={styles.titleText}>{this.props.id} | {this.props.title}</Text>
           <Text style={styles.simpleText}>{this.props.year} | {this.props.language}</Text>
           <Text style={styles.simpleText}>{this.props.generes}</Text>
           </View>
           <View>
           <Text style={styles.simpleText}>{this.props.rate}</Text>
-          <Text style={styles.simpleText}>{this.props.classification}</Text>
+          <Text style={styles.simpleText}>{this.props.classification ? 'Adult' : 'Public'}</Text>
           </View>
 
         </View>
@@ -151,7 +166,6 @@ class MoreScreen extends Component {
   }  
 }
 
-
 class HomeScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
@@ -172,22 +186,36 @@ class HomeScreen extends Component {
     };
   };
 
-  componentWillMount() {
-    this.props.navigation.setParams({ increaseCount: this._increaseCount });
+  state = {
+    popularMovies: [],
   }
 
-  state = {
-    count: 0,
-  };
+ async componentWillMount() {
+    this.props.navigation.setParams({ increaseCount: this._increaseCount });
 
-  _increaseCount = () => {
-    this.setState({ count: this.state.count + 1 });
-  };
+    const popularMoviesAPI = await API.getPopularMovies();
+    // console.log(popularMoviesAPI);
+
+    this.setState({
+      // popularMovies: [
+      //   {key:'1',title:'Pelicula1'},
+      //   {key:'2',title:'Pelicula2'},
+      // ],
+
+      popularMovies: [
+        popularMoviesAPI
+      ],
+    })
+  } 
+
+  // _increaseCount = () => {
+  //   this.setState({ count: this.state.count + 1 });
+  // };
 
   render() {
     return (
       <View style={styles.container}>
-      <Text>Count: {this.state.count}</Text>
+      {/* <Text>Count: {this.state.count}</Text>
         <Button
           title="Go to Details"
           onPress={() => this.props.navigation.navigate('Details',
@@ -196,25 +224,40 @@ class HomeScreen extends Component {
           }
           )
         }
-        />
+        /> */}
+        
+      <Image style={styles.imgTest} source={{uri:
+          'https://image.tmdb.org/t/p/original/wwemzKWzjKYJFfCeiB57q3r4Bcm.png'
+         }} />
 
-        <Filter />
-        <FlatList
-          data={[
-            {key:'1',title: 'Pelicula 1',year:'2018',language:'En',generes:'Action,Adventure',rate:'6.6',classification:'Public',imageUri:'https://image.tmdb.org/t/p/w185_and_h278_bestv2/fw02ONlDhrYjTSZV8XO6hhU3ds3.jpg'},
-            {key:'2',title: 'Pelicula 2',year:'2018',language:'En',generes:'Action,Adventure',rate:'6.6',classification:'Public',imageUri:'https://image.tmdb.org/t/p/w185_and_h278_bestv2/5Kg76ldv7VxeX9YlcQXiowHgdX6.jpg'},
-            {key:'3',title: 'Pelicula 3',year:'2018',language:'En',generes:'Action,Adventure',rate:'6.6',classification:'Public',imageUri:'https://image.tmdb.org/t/p/w185_and_h278_bestv2/f03YksE4NggUjG75toz4H1YAGRf.jpg'},
-          ]}
+        {/* <FlatList
+          
+          data={this.state.popularMovies[0]}
+          // ListEmptyComponent={this.renderEmtpy}
+          // ItemSeparatorComponent={this.itemSeparator}
           renderItem={({item}) =>
 
-          <Movie title={item.title} year={item.year} language={item.language}  generes={item.generes}  rate={item.rate} classification={item.classification} imageUri={item.imageUri} />
+          <Movie title={item.title} year={item.release_date} language={item.original_language}  generes='falta hacer'  rate={item.vote_average} classification={item.adult} imageUri={item.poster_path} />
+          // <Movie id={item.id} title={item.title}  />
           
           }
-        />
+          keyExtractor={(item, index) => item.id.toString()}
+        /> */}
+        
+        {/* <FlatList
+          data={this.state.popularMovies}
+          renderItem={({item}) =>
+
+          // <Movie title={item.title} year={item.year} language={item.language}  generes={item.generes}  rate={item.rate} classification={item.classification} imageUri={item.imageUri} />
+          <Movie title={item.title} />
+          
+          }
+        /> */}
       </View>
     );
   }
 }
+
 const getTabBarIcon = (navigation, focused, tintColor) => {
   const { routeName } = navigation.state;
 
@@ -250,51 +293,27 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
   );
 };
 
-// const TabNavigator = createBottomTabNavigator(
-//   {
-//     HomeStack,
-//   SearchStack,
-//   MoreStack
-//   },
-//   {
-//     defaultNavigationOptions: ({ navigation }) => ({
-//       tabBarIcon: ({ focused, tintColor }) =>
-//         getTabBarIcon(navigation, focused, tintColor),
-//     }),
-//     tabBarOptions: {
-//       activeTintColor: 'tomato',
-//       inactiveTintColor: 'gray',
-//     },
-//   }
-// );
-
-const HomeStack = createStackNavigator({ HomeScreen });
-const SearchStack = createStackNavigator({ SearchScreen });
-const MoreStack = createStackNavigator({ MoreScreen });
+const Home = createStackNavigator({ HomeScreen });
+const Search = createStackNavigator({ SearchScreen });
+const More = createStackNavigator({ MoreScreen });
+const Details = createStackNavigator({ DetailsScreen });
 
 export default createAppContainer(createBottomTabNavigator({
-  HomeStack,
-  SearchStack,
-  MoreStack
-}));
+  Home,
+  Search,
+  More
+  },
+    {
+      defaultNavigationOptions: ({ navigation }) => ({
+        tabBarIcon: ({ focused, tintColor }) =>
+          getTabBarIcon(navigation, focused, tintColor),
+      }),
+      tabBarOptions: {
+        activeTintColor: 'tomato',
+        inactiveTintColor: 'gray',
+      },
+    }
+));
 
-// const AppNavigator = createStackNavigator(
-//   {
-//     Home: HomeScreen,
-//     Details: DetailsScreen,
-//   },
-//   {
-//     initialRouteName: 'Home',
-//   }
-// );
-
-//  const AppContainer = createAppContainer(TabNavigator);
-// const AppContainer = createStackNavigator({ TabNavigator }, { headerMode: "none" });
-
-// export default class App extends Component {
-//   render() {
-//     return <AppContainer />;
-//   }
-// }
 
 AppRegistry.registerComponent('MovieApp', () => AppContainer);

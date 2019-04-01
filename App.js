@@ -80,14 +80,18 @@ const styles = StyleSheet.create({
 
   containerInfoDetail: {
     flex:1,
-    padding:20,
+    paddingLeft:20,
+    paddingRight:20,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
 
-  containerSypnosis: {
-    flex:1,
-    padding:20,
+  containerSypnosis: {    
+    flex:2,
+    paddingLeft:20,
+    paddingRight:20,
+    // backgroundColor: 'red',
   },
 
   containerCast: {
@@ -109,7 +113,12 @@ const styles = StyleSheet.create({
 
   profileCast:{
     flex:1,
-  }
+  },
+
+  readMore:{
+    color: 'red',
+    textAlign: 'right',
+  },
 })
 
 class Movie extends Component{
@@ -181,16 +190,38 @@ class SearchScreen extends Component {
       headerTitle: 'Movie details',
       headerRight: (
       <Image
-        source={require('./assets/filter.png')}
+        source={require('./assets/share.png')}
         style={{ width: 20, height: 20 }}
       />
       ),
     };
   };
+
+  
+  state = {
+    detailMovie: [],
+    title: ''
+  }
+
+  async componentWillMount() {
+    // this.props.navigation.setParams({ increaseCount: this._increaseCount });
+
+    const detailMovieAPI = await API.getMovie(166428);
+    console.log(detailMovieAPI.spoken_languages[0].name);
+
+    this.setState({
+      runtime: detailMovieAPI.runtime,
+      genres: detailMovieAPI.genres[0].name + ',' + detailMovieAPI.genres[1].name,
+      language: detailMovieAPI.spoken_languages[0].name,
+      overview: detailMovieAPI.overview,
+    })
+  }
+
   render() {
 
     const IMG_URL = 'https://image.tmdb.org/t/p/w780';
     const PROFIL_IMG_URL = 'https://image.tmdb.org/t/p/w45';
+
     const idMovie = 166428;
 
     return(
@@ -206,23 +237,26 @@ class SearchScreen extends Component {
         <View style={styles.containerInfoDetail}>
           <View> 
             <Text style={styles.titleText}>Duration</Text>
-            <Text style={styles.simpleText}>02h 15m</Text>
+            <Text style={styles.simpleText}>{this.state.runtime}</Text>
           </View>
           <View> 
             <Text style={styles.titleText}>Genre</Text>
-            <Text style={styles.simpleText}>Drama,Music</Text>
+            <Text style={styles.simpleText}>{this.state.genres}</Text>
            </View>
 
            <View> 
             <Text style={styles.titleText}>Language</Text>
-            <Text style={styles.simpleText}>English</Text>
+            <Text style={styles.simpleText}>{this.state.language}</Text>
            </View>           
         </View>
 
         <View style={styles.containerSypnosis}>
           <View> 
             <Text style={styles.titleText}>Sypnosis</Text>
-            <Text style={styles.simpleText}>As Hiccup fulfills his dream of creating a peaceful dragon utopia, Toothless’ discovery of an untamed, elusive mate draws the Night Fury0 away.  Read more.</Text>
+            {/* <Text style={styles.simpleText}>As Hiccup fulfills his dream of creating a peaceful dragon utopia, Toothless’ discovery of an untamed, elusive mate draws the Night Fury0 away...</Text> */}
+            <Text style={styles.simpleText}>{this.state.overview}</Text>
+            <Text style={styles.readMore}>Read more</Text>
+
           </View>
         </View>
 
@@ -259,19 +293,6 @@ class SearchScreen extends Component {
 
             </View>
         </View>
-
-        {/* <View style={styles.infoMovie}>
-          <View>
-          <Text style={styles.titleText}>{this.props.title}</Text>
-          <Text style={styles.simpleText}>{this.props.year} | {this.props.language}</Text>
-          <Text style={styles.simpleText}>{this.props.generes}</Text>
-          </View>
-          <View>
-          <Text style={styles.simpleText}>{this.props.rate}</Text>
-          <Text style={styles.simpleText}>{this.props.classification ? 'Adult' : 'Public'}</Text>
-          </View>
-
-        </View> */}
       </View>
     );
 
@@ -316,7 +337,7 @@ class HomeScreen extends Component {
   }
 
  async componentWillMount() {
-    this.props.navigation.setParams({ increaseCount: this._increaseCount });
+    // this.props.navigation.setParams({ increaseCount: this._increaseCount });
 
     const popularMoviesAPI = await API.getPopularMovies();
 

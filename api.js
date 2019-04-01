@@ -8,10 +8,15 @@ class Api {
       console.log('Entre a getPopularMovie');
     const query = await fetch(`${BASE_API}movie/popular?api_key=${API_KEY}&language=${API_LANGUAGE}&page=1`);
     const { results } = await query.json();
-    // console.log(results);
     return results;
+  } 
 
-  }  
+  async getMovie(idMovie) {
+    console.log('Entre a getMovie');
+    const query = await fetch(`${BASE_API}movie/${idMovie}?api_key=${API_KEY}&language=${API_LANGUAGE}`);
+    return await query.json();
+  } 
+
 }
 
 export default new Api();

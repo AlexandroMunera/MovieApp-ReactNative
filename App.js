@@ -61,6 +61,55 @@ const styles = StyleSheet.create({
     width: 400,
     height:400
   },
+
+  backdropPhotoMovie:{
+    flex: 2,
+    height: 250,
+
+  },
+
+  containerDetailMovie: {
+    flex:1,
+    justifyContent: 'flex-start',
+  },
+
+  containerTrailer: {
+    flex:3,
+    // backgroundColor: 'red',
+  },
+
+  containerInfoDetail: {
+    flex:1,
+    padding:20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+
+  containerSypnosis: {
+    flex:1,
+    padding:20,
+  },
+
+  containerCast: {
+    flex:2,
+    padding:20,
+  },
+
+  mainCast:{
+    flex:1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+
+  castPhoto:{
+    width: 50,
+    height: 50,
+    borderRadius:50,
+  },
+
+  profileCast:{
+    flex:1,
+  }
 })
 
 class Movie extends Component{
@@ -70,6 +119,7 @@ class Movie extends Component{
 
     return(
       <View style={styles.containerMovie}>
+      
         <Image style={styles.photoMovie} source={{uri: IMG_URL + this.props.imageUri}} /> 
         <View style={styles.infoMovie}>
           <View>
@@ -126,22 +176,105 @@ class DetailsScreen extends Component {
 }
 
 class SearchScreen extends Component {
-  static navigationOptions = {
-    title: 'Search',
-    headerRight: (
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerTitle: 'Movie details',
+      headerRight: (
       <Image
-        source={require('./assets/share.png')}
+        source={require('./assets/filter.png')}
         style={{ width: 20, height: 20 }}
       />
-    ),
+      ),
+    };
   };
   render() {
 
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text> Search Screen</Text>
+    const IMG_URL = 'https://image.tmdb.org/t/p/w780';
+    const PROFIL_IMG_URL = 'https://image.tmdb.org/t/p/w45';
+    const idMovie = 166428;
+
+    return(
+      <View style={styles.containerDetailMovie}>
+
+        <View style={styles.containerTrailer}>
+          <Image style={styles.backdropPhotoMovie} 
+           source={{uri: IMG_URL + '/h3KN24PrOheHVYs9ypuOIdFBEpX.jpg'}} 
+        /> 
+
+        </View>
+
+        <View style={styles.containerInfoDetail}>
+          <View> 
+            <Text style={styles.titleText}>Duration</Text>
+            <Text style={styles.simpleText}>02h 15m</Text>
+          </View>
+          <View> 
+            <Text style={styles.titleText}>Genre</Text>
+            <Text style={styles.simpleText}>Drama,Music</Text>
+           </View>
+
+           <View> 
+            <Text style={styles.titleText}>Language</Text>
+            <Text style={styles.simpleText}>English</Text>
+           </View>           
+        </View>
+
+        <View style={styles.containerSypnosis}>
+          <View> 
+            <Text style={styles.titleText}>Sypnosis</Text>
+            <Text style={styles.simpleText}>As Hiccup fulfills his dream of creating a peaceful dragon utopia, Toothless’ discovery of an untamed, elusive mate draws the Night Fury0 away.  Read more.</Text>
+          </View>
+        </View>
+
+        <View style={styles.containerCast}>
+            <Text style={styles.titleText}>Main cast</Text>
+            <View style={styles.mainCast}>
+
+              <View style={styles.profileCast}>
+                <Text style={styles.simpleText}>Freddie...</Text>
+                
+                <Image style={styles.castPhoto} 
+                    source={{uri: PROFIL_IMG_URL + '/7EX0od3FwdaoEegJlY1q0kZgEqt.jpg' }}/>
+                    
+                <Text style={styles.simpleText}>Rami Malek</Text>
+              </View>
+
+              <View style={styles.profileCast}>
+                <Text style={styles.simpleText}>Freddie...</Text>
+                
+                <Image style={styles.castPhoto} 
+                    source={{uri: PROFIL_IMG_URL + '/9xuc962JhsW51bCFURtel7RBrMM.jpg' }}/>
+                    
+                <Text style={styles.simpleText}>Rami Malek</Text>
+              </View>
+
+              <View style={styles.profileCast}>
+                <Text style={styles.simpleText}>Freddie...</Text>
+                
+                <Image style={styles.castPhoto} 
+                    source={{uri: PROFIL_IMG_URL + '/nRbIHvVpz5jfQbKlnBAJN10qaLo.jpg' }}/>
+                    
+                <Text style={styles.simpleText}>Rami Malek</Text>
+              </View> 
+
+            </View>
+        </View>
+
+        {/* <View style={styles.infoMovie}>
+          <View>
+          <Text style={styles.titleText}>{this.props.title}</Text>
+          <Text style={styles.simpleText}>{this.props.year} | {this.props.language}</Text>
+          <Text style={styles.simpleText}>{this.props.generes}</Text>
+          </View>
+          <View>
+          <Text style={styles.simpleText}>{this.props.rate}</Text>
+          <Text style={styles.simpleText}>{this.props.classification ? 'Adult' : 'Public'}</Text>
+          </View>
+
+        </View> */}
       </View>
     );
+
   } 
 }
 
@@ -192,13 +325,14 @@ class HomeScreen extends Component {
         popularMoviesAPI
       ],
     })
-  } 
-
+  }
 
   render() {
     return (
-      <View style={styles.container}>      
+      <View style={styles.container}>       
+
         <Filter />
+
         <FlatList          
           data={this.state.popularMovies[0]}
           renderItem={({item}) =>
@@ -256,9 +390,11 @@ const More = createStackNavigator({ MoreScreen });
 const Details = createStackNavigator({ DetailsScreen });
 
 export default createAppContainer(createBottomTabNavigator({
-  Home,
   Search,
-  More
+  Home,
+  
+  More,
+  // Details
   },
     {
       defaultNavigationOptions: ({ navigation }) => ({
@@ -271,6 +407,5 @@ export default createAppContainer(createBottomTabNavigator({
       },
     }
 ));
-
 
 AppRegistry.registerComponent('MovieApp', () => AppContainer);

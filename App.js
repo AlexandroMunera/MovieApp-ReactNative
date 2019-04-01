@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { AppRegistry, FlatList, StyleSheet, Text, View, Image, Button,Platform } from 'react-native';
-import { createAppContainer, createStackNavigator, StackActions, NavigationActions } from 'react-navigation';
+import { createAppContainer,createBottomTabNavigator, createStackNavigator, StackActions, NavigationActions } from 'react-navigation';
 
 const styles = StyleSheet.create({
   container: {
@@ -111,6 +111,47 @@ class DetailsScreen extends Component {
   }  
 }
 
+class SearchScreen extends Component {
+  static navigationOptions = {
+    title: 'Search',
+    headerRight: (
+      <Image
+        source={require('./assets/share.png')}
+        style={{ width: 20, height: 20 }}
+      />
+    ),
+  };
+  render() {
+
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text> Search Screen</Text>
+      </View>
+    );
+  } 
+}
+
+class MoreScreen extends Component {
+  static navigationOptions = {
+    title: 'Menu',
+    headerRight: (
+      <Image
+        source={require('./assets/share.png')}
+        style={{ width: 20, height: 20 }}
+      />
+    ),
+  };
+  render() {
+
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>Menu Screen</Text>
+      </View>
+    );
+  }  
+}
+
+
 class HomeScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
@@ -174,23 +215,86 @@ class HomeScreen extends Component {
     );
   }
 }
+const getTabBarIcon = (navigation, focused, tintColor) => {
+  const { routeName } = navigation.state;
 
-const AppNavigator = createStackNavigator(
-  {
-    Home: HomeScreen,
-    Details: DetailsScreen,
-  },
-  {
-    initialRouteName: 'Home',
+  if (routeName === 'Home') {
+    return (
+      <Image
+        source={require('./assets/home.png')}
+        style={{width: 20, height: 20}}
+      />
+    );
+        
+  } else if (routeName === 'Search') {
+    return (
+      <Image
+        source={require('./assets/search.png')}
+        style={{width: 20, height: 20}}
+      />
+    );
+  } else if (routeName === 'More') {
+    return (
+      <Image
+        source={require('./assets/menu.png')}
+        style={{width: 20, height: 20}}
+      />
+    );
   }
-);
 
-const AppContainer = createAppContainer(AppNavigator);
+  return (
+    <Image
+      source={require('./assets/home.png')}
+      style={{width: 20, height: 20}}
+    />
+  );
+};
 
-export default class App extends Component {
-  render() {
-    return <AppContainer />;
-  }
-}
+// const TabNavigator = createBottomTabNavigator(
+//   {
+//     HomeStack,
+//   SearchStack,
+//   MoreStack
+//   },
+//   {
+//     defaultNavigationOptions: ({ navigation }) => ({
+//       tabBarIcon: ({ focused, tintColor }) =>
+//         getTabBarIcon(navigation, focused, tintColor),
+//     }),
+//     tabBarOptions: {
+//       activeTintColor: 'tomato',
+//       inactiveTintColor: 'gray',
+//     },
+//   }
+// );
 
-AppRegistry.registerComponent('MovieApp', () => AppNavigator);
+const HomeStack = createStackNavigator({ HomeScreen });
+const SearchStack = createStackNavigator({ SearchScreen });
+const MoreStack = createStackNavigator({ MoreScreen });
+
+export default createAppContainer(createBottomTabNavigator({
+  HomeStack,
+  SearchStack,
+  MoreStack
+}));
+
+// const AppNavigator = createStackNavigator(
+//   {
+//     Home: HomeScreen,
+//     Details: DetailsScreen,
+//   },
+//   {
+//     initialRouteName: 'Home',
+//   }
+// );
+
+//  const AppContainer = createAppContainer(TabNavigator);
+// const AppContainer = createStackNavigator({ TabNavigator }, { headerMode: "none" });
+
+// export default class App extends Component {
+//   render() {
+//     return <AppContainer />;
+//   }
+// }
+
+AppRegistry.registerComponent('MovieApp', () => AppContainer);

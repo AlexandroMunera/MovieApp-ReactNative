@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   },
 
   containerMovie: {
-    margin: 20,
+    margin: 8,
     flex:1,
     flexDirection: 'row',
   },
@@ -26,14 +26,14 @@ const styles = StyleSheet.create({
   },
 
   titleText: {
-    fontSize: 25,
+    fontSize: 15,
     fontWeight: 'bold',
   },
 
   photoMovie: {
     flex: 1,
     marginRight: 20,
-    height: 200,
+    height: 150,
     borderRadius:10,
     // borderWidth: 1,
     // borderColor: '#fff'
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   },
 
   infoMovie:{
-    flex:1,
+    flex:2,
     justifyContent: 'space-between',
   },
 
@@ -66,15 +66,14 @@ const styles = StyleSheet.create({
 class Movie extends Component{
   render() {
 
-    var IMG_URL = 'https://image.tmdb.org/t/p/w300';
+    const IMG_URL = 'https://image.tmdb.org/t/p/w185';
 
     return(
       <View style={styles.containerMovie}>
-        {/* <Image style={styles.photoMovie} source={{uri: IMG_URL + this.props.imageUri}} /> */}
-        <Image style={styles.photoMovie} source={{uri: 'http://image.tmdb.org/t/p/w500/fw02ONlDhrYjTSZV8XO6hhU3ds3.jpg'}} />
+        <Image style={styles.photoMovie} source={{uri: IMG_URL + this.props.imageUri}} /> 
         <View style={styles.infoMovie}>
           <View>
-          <Text style={styles.titleText}>{this.props.id} | {this.props.title}</Text>
+          <Text style={styles.titleText}>{this.props.title}</Text>
           <Text style={styles.simpleText}>{this.props.year} | {this.props.language}</Text>
           <Text style={styles.simpleText}>{this.props.generes}</Text>
           </View>
@@ -176,13 +175,6 @@ class HomeScreen extends Component {
         style={{ width: 20, height: 20 }}
       />
       ),
-      // headerRight: (
-      //   <Button
-      //     onPress={navigation.getParam('increaseCount')}
-      //     title="+1"
-      //     color={Platform.OS === 'ios' ? '#fff' : null}
-      //   />
-      // ),
     };
   };
 
@@ -194,65 +186,30 @@ class HomeScreen extends Component {
     this.props.navigation.setParams({ increaseCount: this._increaseCount });
 
     const popularMoviesAPI = await API.getPopularMovies();
-    // console.log(popularMoviesAPI);
 
     this.setState({
-      // popularMovies: [
-      //   {key:'1',title:'Pelicula1'},
-      //   {key:'2',title:'Pelicula2'},
-      // ],
-
       popularMovies: [
         popularMoviesAPI
       ],
     })
   } 
 
-  // _increaseCount = () => {
-  //   this.setState({ count: this.state.count + 1 });
-  // };
 
   render() {
     return (
-      <View style={styles.container}>
-      {/* <Text>Count: {this.state.count}</Text>
-        <Button
-          title="Go to Details"
-          onPress={() => this.props.navigation.navigate('Details',
-          {
-            key:'1'
-          }
-          )
-        }
-        /> */}
-        
-      <Image style={styles.imgTest} source={{uri:
-          'https://image.tmdb.org/t/p/original/wwemzKWzjKYJFfCeiB57q3r4Bcm.png'
-         }} />
-
-        {/* <FlatList
-          
+      <View style={styles.container}>      
+        <Filter />
+        <FlatList          
           data={this.state.popularMovies[0]}
-          // ListEmptyComponent={this.renderEmtpy}
-          // ItemSeparatorComponent={this.itemSeparator}
           renderItem={({item}) =>
 
           <Movie title={item.title} year={item.release_date} language={item.original_language}  generes='falta hacer'  rate={item.vote_average} classification={item.adult} imageUri={item.poster_path} />
-          // <Movie id={item.id} title={item.title}  />
-          
+                   
           }
-          keyExtractor={(item, index) => item.id.toString()}
-        /> */}
-        
-        {/* <FlatList
-          data={this.state.popularMovies}
-          renderItem={({item}) =>
 
-          // <Movie title={item.title} year={item.year} language={item.language}  generes={item.generes}  rate={item.rate} classification={item.classification} imageUri={item.imageUri} />
-          <Movie title={item.title} />
-          
-          }
-        /> */}
+          keyExtractor={(item, index) => item.id.toString()}
+        />
+        
       </View>
     );
   }

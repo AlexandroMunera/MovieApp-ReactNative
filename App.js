@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   },
 
   containerTrailer: {
-    flex:3,
+    flex:3,    
     // backgroundColor: 'red',
   },
 
@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
     flex:2,
     paddingLeft:20,
     paddingRight:20,
+    paddingBottom:20,
     // backgroundColor: 'red',
   },
 
@@ -118,6 +119,48 @@ const styles = StyleSheet.create({
   readMore:{
     color: 'red',
     textAlign: 'right',
+  },
+
+  containerTitleInDetails:{
+      position: 'absolute',
+      top: 0,
+      left: 20,
+      right: 0,
+      bottom: 30,
+      justifyContent: 'flex-end',
+  },
+
+  titleInDetails:{
+    color: 'white',
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+
+  containerStartsInDetails:{
+    position: 'absolute',
+    top: 0,
+    left: 20,
+    right: 0,
+    bottom: 10,
+    justifyContent: 'flex-end',
+
+  },
+
+  startsInDetails:{
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+
+  },
+
+  containerIconYouTube:{
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 20,
+    bottom: -15,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end'
   },
 })
 
@@ -191,15 +234,13 @@ class SearchScreen extends Component {
       headerRight: (
       <Image
         source={require('./assets/share.png')}
-        style={{ width: 20, height: 20 }}
+        style={{ width: 20, height: 20, marginRight: 10 }}
       />
       ),
     };
   };
 
-  
   state = {
-    detailMovie: [],
     title: ''
   }
 
@@ -207,13 +248,26 @@ class SearchScreen extends Component {
     // this.props.navigation.setParams({ increaseCount: this._increaseCount });
 
     const detailMovieAPI = await API.getMovie(166428);
-    console.log(detailMovieAPI.spoken_languages[0].name);
+    const mainCastMovieAPI = await API.getMainCast(166428);
 
     this.setState({
+      title: detailMovieAPI.title,
       runtime: detailMovieAPI.runtime,
       genres: detailMovieAPI.genres[0].name + ',' + detailMovieAPI.genres[1].name,
       language: detailMovieAPI.spoken_languages[0].name,
       overview: detailMovieAPI.overview,
+
+      characterCast1: mainCastMovieAPI.cast[0].character,
+      profilePhotoCast1: mainCastMovieAPI.cast[0].profile_path,
+      nameCast1: mainCastMovieAPI.cast[0].name,
+
+      characterCast2: mainCastMovieAPI.cast[1].character,
+      profilePhotoCast2: mainCastMovieAPI.cast[1].profile_path,
+      nameCast2: mainCastMovieAPI.cast[1].name,
+
+      characterCast3: mainCastMovieAPI.cast[2].character,
+      profilePhotoCast3: mainCastMovieAPI.cast[2].profile_path,
+      nameCast3: mainCastMovieAPI.cast[2].name,
     })
   }
 
@@ -229,10 +283,25 @@ class SearchScreen extends Component {
 
         <View style={styles.containerTrailer}>
           <Image style={styles.backdropPhotoMovie} 
-           source={{uri: IMG_URL + '/h3KN24PrOheHVYs9ypuOIdFBEpX.jpg'}} 
+           source={{uri: IMG_URL + '/h3KN24PrOheHVYs9ypuOIdFBEpX.jpg'}}          
         /> 
 
+        <View style={styles.containerTitleInDetails}>
+         <Text style={styles.titleInDetails} >{this.state.title}</Text>
         </View>
+
+        <View style={styles.containerStartsInDetails}>
+         <Text style={styles.startsInDetails}>XXX</Text>
+        </View>
+
+        <View style={styles.containerIconYouTube}>
+          
+           <Image
+             source={require('./assets/youtube.png')}
+             style={{ width: 50, height: 50 }}
+           />
+        </View>
+      </View>
 
         <View style={styles.containerInfoDetail}>
           <View> 
@@ -260,36 +329,37 @@ class SearchScreen extends Component {
           </View>
         </View>
 
+
         <View style={styles.containerCast}>
             <Text style={styles.titleText}>Main cast</Text>
             <View style={styles.mainCast}>
 
               <View style={styles.profileCast}>
-                <Text style={styles.simpleText}>Freddie...</Text>
+                <Text style={styles.simpleText}>{this.state.characterCast1}</Text>
                 
                 <Image style={styles.castPhoto} 
-                    source={{uri: PROFIL_IMG_URL + '/7EX0od3FwdaoEegJlY1q0kZgEqt.jpg' }}/>
+                    source={{uri: PROFIL_IMG_URL + this.state.profilePhotoCast1 }}/>
                     
-                <Text style={styles.simpleText}>Rami Malek</Text>
+                <Text style={styles.simpleText}>{this.state.nameCast1}</Text>
               </View>
 
               <View style={styles.profileCast}>
-                <Text style={styles.simpleText}>Freddie...</Text>
+                <Text style={styles.simpleText}>{this.state.characterCast2}</Text>
                 
                 <Image style={styles.castPhoto} 
-                    source={{uri: PROFIL_IMG_URL + '/9xuc962JhsW51bCFURtel7RBrMM.jpg' }}/>
+                    source={{uri: PROFIL_IMG_URL + this.state.profilePhotoCast2 }}/>
                     
-                <Text style={styles.simpleText}>Rami Malek</Text>
+                <Text style={styles.simpleText}>{this.state.nameCast2}</Text>
               </View>
 
               <View style={styles.profileCast}>
-                <Text style={styles.simpleText}>Freddie...</Text>
+                <Text style={styles.simpleText}>{this.state.characterCast3}</Text>
                 
                 <Image style={styles.castPhoto} 
-                    source={{uri: PROFIL_IMG_URL + '/nRbIHvVpz5jfQbKlnBAJN10qaLo.jpg' }}/>
+                    source={{uri: PROFIL_IMG_URL + this.state.profilePhotoCast3 }}/>
                     
-                <Text style={styles.simpleText}>Rami Malek</Text>
-              </View> 
+                <Text style={styles.simpleText}>{this.state.nameCast3}</Text>
+              </View>
 
             </View>
         </View>
@@ -326,7 +396,7 @@ class HomeScreen extends Component {
       headerRight: (
       <Image
         source={require('./assets/filter.png')}
-        style={{ width: 20, height: 20 }}
+        style={{ width: 20, height: 20, marginRight: 10 }}
       />
       ),
     };

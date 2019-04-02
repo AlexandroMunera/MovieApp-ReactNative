@@ -5,17 +5,20 @@ const API_LANGUAGE = 'fr';
 class Api {
 
   async getPopularMovies() {
-      console.log('Entre a getPopularMovie');
     const query = await fetch(`${BASE_API}movie/popular?api_key=${API_KEY}&language=${API_LANGUAGE}&page=1`);
     const { results } = await query.json();
     return results;
   } 
 
   async getMovie(idMovie) {
-    console.log('Entre a getMovie');
     const query = await fetch(`${BASE_API}movie/${idMovie}?api_key=${API_KEY}&language=${API_LANGUAGE}`);
     return await query.json();
-  } 
+  }
+
+  async getMainCast(idMovie) {
+    const query = await fetch(`${BASE_API}movie/${idMovie}/credits?api_key=${API_KEY}`);
+    return await query.json();
+  }
 
 }
 

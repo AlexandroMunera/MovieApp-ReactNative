@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { AppRegistry, FlatList, StyleSheet, Text, View, Image, Button,Platform } from 'react-native';
-import { createAppContainer,createBottomTabNavigator, createStackNavigator, StackActions, NavigationActions } from 'react-navigation';
+import { Alert,AppRegistry, FlatList, StyleSheet, Text, View, Image,
+   Button,Platform,TouchableHighlight} from 'react-native';
+import { createAppContainer,createBottomTabNavigator, createStackNavigator,
+   StackActions, NavigationActions } from 'react-navigation';
 
 import API from './api';
 
@@ -165,17 +167,37 @@ const styles = StyleSheet.create({
 })
 
 class Movie extends Component{
+
+  // _onPressButton() {
+  //   Alert.alert('You tapped the button!');
+  //   this.props.navigation.navigate('Search', {
+  //     movieId: 166428,
+  //   })
+  //   // this.props.navigation.setParams({ increaseCount: this._increaseCount });
+  // }
+
   render() {
 
     const IMG_URL = 'https://image.tmdb.org/t/p/w185';
 
+    
     return(
       <View style={styles.containerMovie}>
-      
+
         <Image style={styles.photoMovie} source={{uri: IMG_URL + this.props.imageUri}} /> 
+
         <View style={styles.infoMovie}>
           <View>
-          <Text style={styles.titleText}>{this.props.title}</Text>
+          <TouchableHighlight
+             onPress={() => this.props.navigation.navigate('Search',{
+              idMovie: 166428,
+            })}
+              underlayColor="white"
+          >
+
+            <Text style={styles.titleText}>{this.props.title}</Text>
+          </TouchableHighlight>
+
           <Text style={styles.simpleText}>{this.props.year} | {this.props.language}</Text>
           <Text style={styles.simpleText}>{this.props.generes}</Text>
           </View>
@@ -183,7 +205,6 @@ class Movie extends Component{
           <Text style={styles.simpleText}>{this.props.rate}</Text>
           <Text style={styles.simpleText}>{this.props.classification ? 'Adult' : 'Public'}</Text>
           </View>
-
         </View>
       </View>
     );
@@ -244,8 +265,12 @@ class SearchScreen extends Component {
     title: ''
   }
 
-  async componentWillMount() {
-    // this.props.navigation.setParams({ increaseCount: this._increaseCount });
+  async componentWillMount() { 
+    
+    const { navigation } = this.props;
+    const idMovie = navigation.getParam('idMovie', 'NO-ID');
+    console.log("El id movie es:");
+    console.log(idMovie);
 
     const detailMovieAPI = await API.getMovie(166428);
     const mainCastMovieAPI = await API.getMainCast(166428);
@@ -276,7 +301,11 @@ class SearchScreen extends Component {
     const IMG_URL = 'https://image.tmdb.org/t/p/w780';
     const PROFIL_IMG_URL = 'https://image.tmdb.org/t/p/w45';
 
-    const idMovie = 166428;
+    // const { navigation } = this.props;
+    // const idMovie = navigation.getParam('idMovie', 'NO-ID');
+    // // const idMovie = 166428;
+    // console.log("El id movie es:");
+    // console.log(idMovie);
 
     return(
       <View style={styles.containerDetailMovie}>
@@ -407,7 +436,6 @@ class HomeScreen extends Component {
   }
 
  async componentWillMount() {
-    // this.props.navigation.setParams({ increaseCount: this._increaseCount });
 
     const popularMoviesAPI = await API.getPopularMovies();
 
@@ -428,7 +456,7 @@ class HomeScreen extends Component {
           data={this.state.popularMovies[0]}
           renderItem={({item}) =>
 
-          <Movie title={item.title} year={item.release_date} language={item.original_language}  generes='falta hacer'  rate={item.vote_average} classification={item.adult} imageUri={item.poster_path} />
+          <Movie navigation={this.props.navigation} title={item.title} year={item.release_date} language={item.original_language}  generes='falta hacer'  rate={item.vote_average} classification={item.adult} imageUri={item.poster_path} />
                    
           }
 
@@ -481,11 +509,11 @@ const More = createStackNavigator({ MoreScreen });
 const Details = createStackNavigator({ DetailsScreen });
 
 export default createAppContainer(createBottomTabNavigator({
-  Search,
   Home,
-  
+  Search,
   More,
   // Details
+  
   },
     {
       defaultNavigationOptions: ({ navigation }) => ({
